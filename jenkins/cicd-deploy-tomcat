@@ -60,9 +60,11 @@ pipeline {
        stage('build & push docker image') {
 	         steps {
               withDockerRegistry(credentialsId: 'dockerhup', toolName: 'Docker') {
-                    sh script: 'cd  $WORKSPACE'
-                    sh script: 'docker build --file Dockerfile --tag docker.io/buntatiba/xyztechnologies:$BUILD_NUMBER .'
-                    sh script: 'docker push docker.io/buntatiba/xyztechnologies:$BUILD_NUMBER'
+                sh """
+                    cd $WORKSPACE
+                    docker build --file Dockerfile --tag docker.io/buntatiba/xyztechnologies:$BUILD_NUMBER .
+                    docker push docker.io/buntatiba/xyztechnologies:$BUILD_NUMBER
+                """
                 }	
             }		
         }
