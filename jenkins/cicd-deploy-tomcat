@@ -56,29 +56,36 @@ pipeline {
 		            sh script: '/opt/maven/bin/mvn package'	
            }		
         }
-        
-       stage('build & push docker image') {
+        stage('build & push docker image') {
 	         steps {
+	             script{
               withDockerRegistry(credentialsId: 'dockerhup', toolName: 'Docker') {
                 sh """
                     cd $WORKSPACE
                     docker build --file Dockerfile --tag docker.io/buntatiba/xyztechnologies:$BUILD_NUMBER .
                     docker push docker.io/buntatiba/xyztechnologies:$BUILD_NUMBER
                 """
-                }	
-            }		
+              }
+	             }
+	         }
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+                   deploy adapters: [tomcat9(credentialsId: 'tomcat-cred', path: '', url: 'http://34.125.248.14:8181/')], contextPath: 'XYZtechnologies-1.0', war: '**/*.war'
+            }
         }
         stage('Deploy to Tomcat') {
             steps {
                 script {
-                    // Pull the Docker image from the registry
+                     Pull the Docker image from the registry
                     sh "docker pull ${DOCKER_REGISTRY}/${DOCKER_IMAGE}"
 
-                    // Run the Docker container on Tomcat
-                    sh "docker run -d --name xyztechnologies-$BUILD_NUMBER -p 8181:8181 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}"
+                     Run the Docker container on Tomcat
+                    sh "docker run -d --name xyztechnologies-$BUILD_NUMBER -p 8182:8181 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}"
                 }
             }
         }
-       
-    }     
-} 
+    }
+}
+        
+    
