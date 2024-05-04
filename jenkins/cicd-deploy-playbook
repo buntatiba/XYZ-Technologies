@@ -69,21 +69,11 @@ pipeline {
 	             }
 	         }
         }
-      //  stage('Deploy to Tomcat') {
-        //    steps {
-          //         deploy adapters: [tomcat9(credentialsId: 'tomcat-cred', path: '', url: 'http://34.125.248.14:8181/')], contextPath: 'XYZtechnologies-1.0', war: '**/*.war'
-         //   }
-       // }
-        stage('Deploy to container') {
-            steps {
-                script {
-                     Pull the Docker image from the registry
-                    sh "docker pull ${DOCKER_REGISTRY}/${DOCKER_IMAGE}"
-
-                     Run the Docker container on Tomcat
-                    sh "docker run -d --name xyztechnologies-$BUILD_NUMBER -p 8183:8181 ${DOCKER_REGISTRY}/${DOCKER_IMAGE}"
-                }
-            }
+        stage('deploy-QA') {
+	         steps {
+                // step7_Deploys the application to the QA environment using an Ansible playbook.
+                    sh script: 'ansible-playbook $WORKSPACE/deploy/deploy-ansible-playbook.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
+           }		
         }
     }
 }
