@@ -72,7 +72,7 @@ pipeline {
         stage('deploy-QA') {
 	         steps {
                 // step7_Deploys the application to the QA environment using an Ansible playbook.
-                    sh script: 'ansible-playbook $WORKSPACE/deploy/deploy-ansible-playbook.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
+                    sh script: 'ansible-playbook $WORKSPACE/deploy/manifest.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
            }		
         }
     }
